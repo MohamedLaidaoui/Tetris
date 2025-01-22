@@ -62,4 +62,24 @@ function drawGrid() {
       }
     }
   }
+
+
+// Ajouter un tétromino à la grille
+function addTetrominoToGrid(tetromino, startRow, startCol) {
+    for (let row = 0; row < tetromino.length; row++) {
+      for (let col = 0; col < tetromino[row].length; col++) {
+        if (tetromino[row][col] === 1) {
+          grid[startRow + row][startCol + col] = 1;
+        }
+      }
+    }
+  }
+  
+
+
+// Initialisation
+drawGrid();
+let tetrominoJ = tetrominos.J;
+addTetrominoToGrid(tetrominoJ, 5, 4); // Ajouter un tétromino "T" à la grille
+drawGrid();
   
