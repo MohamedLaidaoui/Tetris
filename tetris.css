@@ -26,7 +26,25 @@ body {
     background-color: #333;
   }
   
-  .cell.active {
+  .cell.active1 {
+    background-color: #12d1f3; /* Couleur des tétrominos */
+  }
+  .cell.active2 {
+    background-color: #1228f3; /* Couleur des tétrominos */
+  }
+  .cell.active3 {
     background-color: #f39c12; /* Couleur des tétrominos */
+  }
+  .cell.active4 {
+    background-color: #dff70a; /* Couleur des tétrominos */
+  }
+  .cell.active5 {
+    background-color: #39d61a; /* Couleur des tétrominos */
+  }
+  .cell.active6 {
+    background-color: #a90cc9; /* Couleur des tétrominos */
+  }
+  .cell.active7 {
+    background-color: #f31212; /* Couleur des tétrominos */
   }
   
