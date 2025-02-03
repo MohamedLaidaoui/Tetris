@@ -12,7 +12,7 @@ document.addEventListener("keydown", recordKey);
 console.log({ length: ROWS });
 const backgroundGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 const foregroundGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-const coordonneeTetrominos = [6, 6];
+const coordonneeTetrominos = [0, 3];
 
 // Tétrominos (tableaux 2D avec des 1 et des 0)
 const tetrominos = {
@@ -53,37 +53,31 @@ const tetrominos = {
   ],
 };
 
+//genere un tetromino aleatoire
+function getRandomTetromino() {
+  const tetrominoKeys = Object.keys(tetrominos); // Récupère les clés (I, J, L, O, S, Z, T)
+  const randomKey = tetrominoKeys[Math.floor(Math.random() * tetrominoKeys.length)]; // Sélectionne une clé au hasard
+  return tetrominos[randomKey]; // Retourne le nom du tétriminos sous forme de chaîne
+}
+
 // Dessiner la grille dans le DOM
 function drawbackgroundGrid() {
-  gameContainer.innerHTML = ""; // Réinitialiser la grillefor (let row = 0; row < ROWS; row++) {
+  gameContainer.innerHTML = ""; // Réinitialiser la grille
+  
   for (let row = 0; row < ROWS; row++) {
     for (let col = 0; col < COLS; col++) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
-      switch (backgroundGrid[row][col]) {
-        case 1:
-          cell.classList.add("active1");
-          break;
-        case 2:
-          cell.classList.add("active2");
-          break;
-        case 3:
-          cell.classList.add("active3");
-          break;
-        case 4:
-          cell.classList.add("active4");
-          break;
-        case 5:
-          cell.classList.add("active5");
-          break;
-        case 6:
-          cell.classList.add("active6");
-          break;
-        case 7:
-          cell.classList.add("active7");
-          break;
-        default:
+      
+      // Vérifier d'abord la foregroundGrid
+      if (foregroundGrid[row][col] !== 0) {
+        cell.classList.add(`active${foregroundGrid[row][col]}`);
+      } 
+      // Si foregroundGrid est vide, vérifier la backgroundGrid
+      else if (backgroundGrid[row][col] !== 0) {
+        cell.classList.add(`active${backgroundGrid[row][col]}`);
       }
+      
       gameContainer.appendChild(cell);
     }
   }
@@ -94,6 +88,8 @@ function resetBackgroundGrid() {
     element.fill(0);
   });
   console.log(backgroundGrid);
+  console.log("foregroundGrid");
+  console.log(foregroundGrid);
 }
 
 // Ajouter un tétromino à la grille
@@ -105,6 +101,7 @@ function addTetrominoTobackgroundGrid(tetromino) {
           coordonneeTetrominos[0] + row >= ROWS ||
           coordonneeTetrominos[1] + col >= COLS
         ) {
+          console.log("outOfBoundException");
           throw new Error("outOfBoundException");
         }
         backgroundGrid[coordonneeTetrominos[0] + row][
@@ -129,33 +126,100 @@ function rotateTetromino() {
 }
 
 function moveToRightTetromino() {
-  if (coordonneeTetrominos[1] == COLS-1) {
-    throw new Error("outOfBoundException");
+  for (let row = 0; row < tetromino.length; row++) {
+    for (let col = 0; col < tetromino[row].length; col++) {
+      if (tetromino[row][col] > 0) {
+        // Vérifie si une partie du tétrimino dépasserait la limite droite
+        if (coordonneeTetrominos[1] + col + 1 >= COLS) {
+          throw new Error("outOfBoundException");
+        }
+      }
+    }
   }
   coordonneeTetrominos[1]++;
 }
 
+
 function moveToLeftTetromino() {
-  if (coordonneeTetrominos[1] == 0) {
-    throw new Error("outOfBoundException");
+  for (let row = 0; row < tetromino.length; row++) {
+    for (let col = 0; col < tetromino[row].length; col++) {
+      if (tetromino[row][col] > 0) {
+        if (coordonneeTetrominos[1] + col - 1 < 0) {
+          throw new Error("outOfBoundException");
+        }
+      }
+    }
   }
   coordonneeTetrominos[1]--;
 }
 
 function moveToDownTetromino() {
-  if (coordonneeTetrominos[0] == ROWS-1) {
-    throw new Error("outOfBoundException");
+  
+  if (isCollision()) {
+    // Ajouter le tétrimino à la grille
+    addTetrominoTobackgroundGrid(tetromino);
+    // Générer un nouveau tétrimino
+    tetromino = getRandomTetromino();
+    // Réinitialiser les coordonnées du tétrimino
+    coordonneeTetrominos[0] = 0;
+    coordonneeTetrominos[1] = 3;
   }
+  
   coordonneeTetrominos[0]++;
 }
 
+function isCollision() {
+  for (let row = 0; row < tetromino.length; row++) {
+    for (let col = 0; col < tetromino[row].length; col++) {
+      if (tetromino[row][col] > 0) {
+        const newRow = coordonneeTetrominos[0] + row + 1;
+        const newCol = coordonneeTetrominos[1] + col;
+
+        // Vérifie si le bas de la grille est atteint
+        if (newRow >= ROWS) {
+          lockTetromino();
+          return true;
+        }
+
+        // Vérifie s'il y a une autre pièce en dessous
+        if (foregroundGrid[newRow][newCol] > 0) {
+          lockTetromino();
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+//place le tetrominos dans la foregroundGrid (utilisé dans isColistion)
+function lockTetromino() {
+  for (let row = 0; row < tetromino.length; row++) {
+    for (let col = 0; col < tetromino[row].length; col++) {
+      if (tetromino[row][col] > 0) {
+        foregroundGrid[coordonneeTetrominos[0] + row][coordonneeTetrominos[1] + col] = tetromino[row][col];
+      }
+    }
+  }
+}
+
+function updateGame(){
+  resetBackgroundGrid();
+  moveToDownTetromino();
+  addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
+  drawbackgroundGrid();
+}
+
+
+
 // Initialisation
-var tetromino = tetrominos.I;
+var tetromino = getRandomTetromino();
 addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
 drawbackgroundGrid();
 
+setInterval(updateGame, 1000);
+
 function recordKey(e) {
-  console.log("testt");
   switch (e.key) {
     case "Up":
     case "ArrowUp":
