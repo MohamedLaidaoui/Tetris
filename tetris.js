@@ -1,5 +1,5 @@
 // Dimensions de la grille
-const ROWS = 20;
+const ROWS = 21;
 const COLS = 10;
 
 // Conteneur du jeu
@@ -64,7 +64,7 @@ function getRandomTetromino() {
 function drawbackgroundGrid() {
   gameContainer.innerHTML = ""; // Réinitialiser la grille
   
-  for (let row = 0; row < ROWS; row++) {
+  for (let row = 1; row < ROWS; row++) {
     for (let col = 0; col < COLS; col++) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
@@ -104,6 +104,13 @@ function addTetrominoTobackgroundGrid(tetromino) {
           console.log("outOfBoundException");
           throw new Error("outOfBoundException");
         }
+
+        if (foregroundGrid[coordonneeTetrominos[0] + row]
+                          [coordonneeTetrominos[1] + col] >0 ) {
+        console.log("colissionWithTetrominoException"); 
+        throw new Error("colissionWithTetrominoException");
+        } 
+
         backgroundGrid[coordonneeTetrominos[0] + row][
           coordonneeTetrominos[1] + col
         ] = tetromino[row][col];
@@ -141,11 +148,23 @@ function moveToRightTetromino() {
 
 
 function moveToLeftTetromino() {
+  //On verifie si on a pas atteint le mur de gauche 
   for (let row = 0; row < tetromino.length; row++) {
     for (let col = 0; col < tetromino[row].length; col++) {
       if (tetromino[row][col] > 0) {
         if (coordonneeTetrominos[1] + col - 1 < 0) {
           throw new Error("outOfBoundException");
+        }
+      }
+    }
+  }
+
+  //On verifie si on n'entre pas en colission avec un tetromino sur la gauche
+  for (let row = 0; row < tetromino.length; row++) {
+    for (let col = 0; col < tetromino[row].length; col++) {
+      if (tetromino[row][col] > 0) {
+        if (coordonneeTetrominos[1] + col - 1 < 0) {
+          throw new Error("CollisionWithTetromino");
         }
       }
     }
@@ -158,11 +177,12 @@ function moveToDownTetromino() {
   if (isCollision()) {
     // Ajouter le tétrimino à la grille
     addTetrominoTobackgroundGrid(tetromino);
+    lockTetromino();
     // Générer un nouveau tétrimino
-    tetromino = getRandomTetromino();
     // Réinitialiser les coordonnées du tétrimino
     coordonneeTetrominos[0] = 0;
     coordonneeTetrominos[1] = 3;
+    tetromino = getRandomTetromino();
   }
   
   coordonneeTetrominos[0]++;
@@ -177,13 +197,11 @@ function isCollision() {
 
         // Vérifie si le bas de la grille est atteint
         if (newRow >= ROWS) {
-          lockTetromino();
           return true;
         }
 
         // Vérifie s'il y a une autre pièce en dessous
         if (foregroundGrid[newRow][newCol] > 0) {
-          lockTetromino();
           return true;
         }
       }
@@ -211,7 +229,6 @@ function updateGame(){
 }
 
 
-
 // Initialisation
 var tetromino = getRandomTetromino();
 addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
@@ -230,6 +247,12 @@ function recordKey(e) {
         drawbackgroundGrid();
       } catch (error) {
         console.log("Error");
+        //Si on a depasser donc on annule l'action
+        if (error.message="colissionWithTetrominoException"){
+          rotateTetromino();
+          rotateTetromino();
+          rotateTetromino();
+        }
       }
       console.log(tetromino);
       break;
@@ -244,6 +267,9 @@ function recordKey(e) {
         drawbackgroundGrid();
       } catch (error) {
         //Si on a depasser donc on annule l'action
+        if (error.message="colissionWithTetrominoException"){
+          moveToLeftTetromino();
+        }
       }
       break;
     case "ArrowLeft":
@@ -254,6 +280,9 @@ function recordKey(e) {
         drawbackgroundGrid();
       } catch (error) {
         //Si on a depasser donc on annule l'action
+        if (error.message="colissionWithTetrominoException"){
+          moveToRightTetromino();
+        }
       }
       break;
     case "ArrowDown":
