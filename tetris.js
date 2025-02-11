@@ -8,19 +8,24 @@ var nbLignecompleteTotal = 0; //on augmente le niveau toutes les 10 ligne compl�
 const initialSpeed = 800; //vitesse initial du jeu
 var gameSpeed=800; //vitesse du jeu
 
+
+
 // Conteneur du jeu
 const gameContainer = document.getElementById("game-container");
 
-// Score
-const scoreLabel = document.getElementById("score");
+// niveau et score
+const scoreElement = document.getElementById("score");
+const levelElement = document.getElementById("level");
 
 //Key bindings
 document.addEventListener("keydown", recordKey);
 
 // Initialiser la grille (tableau 2D)
 console.log({ length: ROWS });
+
 const backgroundGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 const foregroundGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
 const coordonneeTetrominos = [0, 3];
 
 // Tétrominos (tableaux 2D avec des 1 et des 0)
@@ -69,6 +74,9 @@ function getRandomTetromino() {
   return tetrominos[randomKey]; // Retourne le nom du tétriminos sous forme de chaîne
 }
 
+var tetromino = getRandomTetromino();
+var nextTetromino = getRandomTetromino(); // Prévisualisation du prochain tetromino
+
 // Dessiner la grille dans le DOM
 function drawbackgroundGrid() {
   gameContainer.innerHTML = ""; // Réinitialiser la grille
@@ -88,6 +96,27 @@ function drawbackgroundGrid() {
       }
       
       gameContainer.appendChild(cell);
+    }
+  }
+}
+
+function drawPreviewTetromino(tetromino) {
+  const previewContainer = document.getElementById("preview");
+  previewContainer.innerHTML = ""; // Réinitialiser la prévisualisation
+  
+  // Créer une grille de prévisualisation pour afficher le tétrimino
+  for (let row = 0; row < 4; row++) { // La preview sera une grille 4x4
+    for (let col = 0; col < 4; col++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+
+      // Dessiner le tétrimino dans la preview si la cellule est active
+      if (tetromino[row] && tetromino[row][col] > 0) {
+        // Ajout d'une classe active en fonction de la couleur
+        cell.classList.add(`active${tetromino[row][col]}`);
+      }
+
+      previewContainer.appendChild(cell);
     }
   }
 }
@@ -184,16 +213,27 @@ function moveToLeftTetromino() {
 function moveToDownTetromino() {
   
   if (isCollision()) {
-    // Ajouter le tétrimino à la grille
+    console.log("Collision détectée");
+
     addTetrominoTobackgroundGrid(tetromino);
     lockTetromino();
-    // Générer un nouveau tétrimino
+
+    // Passer au prochain tétrimino
+    console.log("Changement de tétrimino");
+    console.log("Tétrimino actuel avant changement:", tetromino);
+    console.log("Tétrimino suivant:", nextTetromino);
+
+    tetromino = nextTetromino; 
+    nextTetromino = getRandomTetromino(); // Générer un nouveau tétrimino
+    drawPreviewTetromino(nextTetromino); // Afficher le prochain tétrimino
+
     // Réinitialiser les coordonnées du tétrimino
     coordonneeTetrominos[0] = 0;
     coordonneeTetrominos[1] = 3;
-    tetromino = getRandomTetromino();
-  }
 
+    console.log("Tétrimino après changement:", tetromino);
+    console.log("Next Tetromino (nouveau):", nextTetromino);
+}
   coordonneeTetrominos[0]++;
 }
 
@@ -266,10 +306,11 @@ function checkLine() {
   if (newLevel > level) {
     level = newLevel;
     gameSpeed = initialSpeed - (level) * 50;
+    levelElement.innerHTML = level;
   }
 
   score += nbligneComplete * (level + 1) * 100;
-  scoreLabel.innerHTML = score;
+  scoreElement.innerHTML = score;
 
   console.log(nbLignecompleteTotal);
   console.log(level);
@@ -287,9 +328,9 @@ function updateGame(){
 
 
 // Initialisation
-var tetromino = getRandomTetromino();
 addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
 drawbackgroundGrid();
+drawPreviewTetromino(nextTetromino);
 
 setInterval(updateGame, gameSpeed);
 
