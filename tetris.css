@@ -17,7 +17,7 @@ body {
     background-color: #444;
     margin: 0 auto;
     width: 410px; /* (10 * 25) + (9 * 1px gap) */
-    border: 2px solid white;
+    /*border: 2px solid white;*/
   }
   
   .cell {
@@ -48,3 +48,15 @@ body {
     background-color: #f31212; /* Couleur des tétrominos */
   }
   
+
+#container{
+  position:absolute ;
+  top: 10%;
+  right: 200px;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+}

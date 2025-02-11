@@ -2,8 +2,17 @@
 const ROWS = 21;
 const COLS = 10;
 
+var score = 0;
+var level = 0;
+var nbLignecompleteTotal = 0; //on augmente le niveau toutes les 10 ligne complète
+const initialSpeed = 800; //vitesse initial du jeu
+var gameSpeed=800; //vitesse du jeu
+
 // Conteneur du jeu
 const gameContainer = document.getElementById("game-container");
+
+// Score
+const scoreLabel = document.getElementById("score");
 
 //Key bindings
 document.addEventListener("keydown", recordKey);
@@ -184,7 +193,7 @@ function moveToDownTetromino() {
     coordonneeTetrominos[1] = 3;
     tetromino = getRandomTetromino();
   }
-  
+
   coordonneeTetrominos[0]++;
 }
 
@@ -221,7 +230,11 @@ function lockTetromino() {
   }
 }
 
+
 function checkLine() {
+  
+  let nbligneComplete = 0; //on compte le nombre de ligne complète pour le score
+
   for (let row = foregroundGrid.length - 1; row >= 0; row--) {
     let isComplete = true;
 
@@ -243,8 +256,25 @@ function checkLine() {
 
       // Vérifier la même ligne à nouveau car elle a été remplacée
       row++;
+      nbligneComplete++;
     }
   }
+  nbLignecompleteTotal += nbligneComplete;
+  
+  let newLevel = Math.floor(nbLignecompleteTotal / 2) + 1;
+
+  if (newLevel > level) {
+    level = newLevel;
+    gameSpeed = initialSpeed - (level) * 50;
+  }
+
+  score += nbligneComplete * (level + 1) * 100;
+  scoreLabel.innerHTML = score;
+
+  console.log(nbLignecompleteTotal);
+  console.log(level);
+  console.log(gameSpeed);
+
 }
 
 function updateGame(){
@@ -261,7 +291,7 @@ var tetromino = getRandomTetromino();
 addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
 drawbackgroundGrid();
 
-setInterval(updateGame, 1000);
+setInterval(updateGame, gameSpeed);
 
 function recordKey(e) {
   switch (e.key) {
