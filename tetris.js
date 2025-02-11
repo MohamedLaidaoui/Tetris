@@ -221,11 +221,38 @@ function lockTetromino() {
   }
 }
 
+function checkLine() {
+  for (let row = foregroundGrid.length - 1; row >= 0; row--) {
+    let isComplete = true;
+
+    //parcour la grille et verifie si une ligne est complete
+    for (let col = 0; col < foregroundGrid[row].length; col++) {
+      if (foregroundGrid[row][col] === 0) {
+        isComplete = false;
+        break;
+      }
+    }
+
+    // Si la ligne est complète
+    if (isComplete) {
+      // Supprime la ligne 
+      foregroundGrid.splice(row, 1);
+
+      // Ajoute une nouvelle ligne vide en haut de la grille
+      foregroundGrid.unshift(new Array(foregroundGrid[0].length).fill(0));
+
+      // Vérifier la même ligne à nouveau car elle a été remplacée
+      row++;
+    }
+  }
+}
+
 function updateGame(){
   resetBackgroundGrid();
   moveToDownTetromino();
   addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
   drawbackgroundGrid();
+  checkLine();
 }
 
 
@@ -245,6 +272,8 @@ function recordKey(e) {
         rotateTetromino();
         addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
         drawbackgroundGrid();
+        checkLine();
+
       } catch (error) {
         console.log("Error");
         //Si on a depasser donc on annule l'action
@@ -265,6 +294,7 @@ function recordKey(e) {
         moveToRightTetromino();
         addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
         drawbackgroundGrid();
+        checkLine();
       } catch (error) {
         //Si on a depasser donc on annule l'action
         if (error.message="colissionWithTetrominoException"){
@@ -278,6 +308,7 @@ function recordKey(e) {
         moveToLeftTetromino();
         addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
         drawbackgroundGrid();
+        checkLine();
       } catch (error) {
         //Si on a depasser donc on annule l'action
         if (error.message="colissionWithTetrominoException"){
@@ -291,6 +322,7 @@ function recordKey(e) {
         moveToDownTetromino();
         addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
         drawbackgroundGrid();
+        checkLine();
       } catch (error) {
         //Si on a depasser donc on annule l'action
       }
