@@ -108,13 +108,20 @@ function drawPreviewTetromino(tetromino) {
   for (let row = 0; row < 4; row++) { // La preview sera une grille 4x4
     for (let col = 0; col < 4; col++) {
       const cell = document.createElement("div");
+      
       cell.classList.add("cell");
 
       // Dessiner le tétrimino dans la preview si la cellule est active
       if (tetromino[row] && tetromino[row][col] > 0) {
         // Ajout d'une classe active en fonction de la couleur
-        cell.classList.add(`active${tetromino[row][col]}`);
+         cell.classList.add(`active${tetromino[row][col]}`);
       }
+      else{
+
+        cell.style="background-color: #222;"
+
+      }
+        
 
       previewContainer.appendChild(cell);
     }
@@ -214,7 +221,6 @@ function moveToDownTetromino() {
   
   if (isCollision()) {
     console.log("Collision détectée");
-
     addTetrominoTobackgroundGrid(tetromino);
     lockTetromino();
 
@@ -258,6 +264,7 @@ function isCollision() {
   }
   return false;
 }
+
 
 //place le tetrominos dans la foregroundGrid (utilisé dans isColistion)
 function lockTetromino() {
@@ -319,9 +326,19 @@ function checkLine() {
 }
 
 function updateGame(){
+  try {
   resetBackgroundGrid();
   moveToDownTetromino();
   addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
+  } catch (error) {
+    //Si tetrominoException a l'ajout c'est que l'on est gameOver
+    if (error.message="colissionWithTetrominoException"){
+      console.log("GameOver")
+      alert("Game Over, score : "+score)
+      location.reload();
+      clearInterval(gameloop);
+    }
+  }
   drawbackgroundGrid();
   checkLine();
 }
@@ -332,7 +349,7 @@ addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la gril
 drawbackgroundGrid();
 drawPreviewTetromino(nextTetromino);
 
-setInterval(updateGame, gameSpeed);
+var gameloop = setInterval(updateGame, gameSpeed);
 
 function recordKey(e) {
   switch (e.key) {
