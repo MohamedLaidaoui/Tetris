@@ -203,17 +203,6 @@ function moveToLeftTetromino() {
       }
     }
   }
-
-  //On verifie si on n'entre pas en colission avec un tetromino sur la gauche
-  for (let row = 0; row < tetromino.length; row++) {
-    for (let col = 0; col < tetromino[row].length; col++) {
-      if (tetromino[row][col] > 0) {
-        if (coordonneeTetrominos[1] + col - 1 < 0) {
-          throw new Error("CollisionWithTetromino");
-        }
-      }
-    }
-  }
   coordonneeTetrominos[1]--;
 }
 

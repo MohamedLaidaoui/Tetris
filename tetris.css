@@ -51,8 +51,8 @@ body {
 
 #container{
   position:absolute ;
-  top: 10%;
-  right: 200px;
+  top: 50px;
+  right: 100px;
   width: 200px;
   height: 100%;
   display: flex;
@@ -70,6 +70,7 @@ body {
   grid-template-columns: repeat(4, 40px); /* 4 colonnes */
   gap: 0px;
   margin-top: 20px;
+  margin-left: 50px;
   background-color: #222;
 }
 
