@@ -3,26 +3,35 @@ body {
     text-align: center;
     background-color: #222;
     color: white;
+    overflow: hidden;
   }
   
   h1 {
     margin: 20px 0;
   }
+
+  #start{
+    position: absolute;
+    top:20%;
+    left: 100px;
+    padding: 10px;
+    width: 100px;
+  }
   
   #game-container {
     display: grid;
-    grid-template-rows: repeat(20, 40px); /* 20 lignes */
-    grid-template-columns: repeat(10, 40px); /* 10 colonnes */
+    grid-template-rows: repeat(20, 20px); /* 20 lignes */
+    grid-template-columns: repeat(10, 20px); /* 10 colonnes */
     gap: 1px;
     background-color: #444;
     margin: 0 auto;
-    width: 410px; /* (10 * 25) + (9 * 1px gap) */
+    width: 210px; /* (10 * 25) + (9 * 1px gap) */
     /*border: 2px solid white;*/
   }
   
   .cell {
-    width: 40px;
-    height: 40px;
+    width: 20px;
+    height: 20px;
     background-color: #333;
   }
   
@@ -53,7 +62,7 @@ body {
   position:absolute ;
   top: 50px;
   right: 100px;
-  width: 200px;
+  width: 100px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -66,11 +75,11 @@ body {
 
 #preview {
   display: grid;
-  grid-template-rows: repeat(4, 40px); /* 4 lignes */
-  grid-template-columns: repeat(4, 40px); /* 4 colonnes */
+  grid-template-rows: repeat(4, 20px); /* 4 lignes */
+  grid-template-columns: repeat(4, 20px); /* 4 colonnes */
   gap: 0px;
   margin-top: 20px;
-  margin-left: 50px;
+  margin-left: 40px;
   background-color: #222;
 }
 

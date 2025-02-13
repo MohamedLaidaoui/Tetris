@@ -7,7 +7,7 @@ var level = 0;
 var nbLignecompleteTotal = 0; //on augmente le niveau toutes les 10 ligne complète
 const initialSpeed = 800; //vitesse initial du jeu
 var gameSpeed=800; //vitesse du jeu
-
+var gameStarted = false;
 
 
 // Conteneur du jeu
@@ -77,6 +77,16 @@ function getRandomTetromino() {
 var tetromino = getRandomTetromino();
 var nextTetromino = getRandomTetromino(); // Prévisualisation du prochain tetromino
 
+function start(){
+  // Initialisation
+addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
+drawbackgroundGrid();
+drawPreviewTetromino(nextTetromino);
+
+gameloop = setInterval(updateGame, gameSpeed);
+document.getElementById("start").disabled = true;
+gameStarted=true;
+}
 // Dessiner la grille dans le DOM
 function drawbackgroundGrid() {
   gameContainer.innerHTML = ""; // Réinitialiser la grille
@@ -332,15 +342,17 @@ function updateGame(){
   checkLine();
 }
 
-
-// Initialisation
-addTetrominoTobackgroundGrid(tetromino); // Ajouter un tétromino "T" à la grille
+var gameloop;
 drawbackgroundGrid();
-drawPreviewTetromino(nextTetromino);
 
-var gameloop = setInterval(updateGame, gameSpeed);
+
+
+
 
 function recordKey(e) {
+  if (gameStarted){
+
+  
   switch (e.key) {
     case "Up":
     case "ArrowUp":
@@ -407,4 +419,5 @@ function recordKey(e) {
     default:
       return;
   }
+}
 }
