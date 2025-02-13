@@ -154,7 +154,10 @@ function addTetrominoTobackgroundGrid(tetromino) {
       if (tetromino[row][col] > 0) {
         if (
           coordonneeTetrominos[0] + row >= ROWS ||
-          coordonneeTetrominos[1] + col >= COLS
+          coordonneeTetrominos[1] + col >= COLS ||
+          coordonneeTetrominos[0] + row < 0 ||
+          coordonneeTetrominos[1] + col < 0 
+
         ) {
           console.log("outOfBoundException");
           throw new Error("outOfBoundException");
@@ -387,7 +390,7 @@ function recordKey(e) {
       } catch (error) {
         //Si on a depasser donc on annule l'action
         if (error.message="colissionWithTetrominoException"){
-          moveToLeftTetromino();
+          
         }
       }
       break;
@@ -401,7 +404,7 @@ function recordKey(e) {
       } catch (error) {
         //Si on a depasser donc on annule l'action
         if (error.message="colissionWithTetrominoException"){
-          moveToRightTetromino();
+          
         }
       }
       break;
